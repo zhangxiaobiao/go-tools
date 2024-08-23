@@ -2,11 +2,14 @@ package main
 
 import (
 	"bb/cmd/check"
+	"bb/cmd/editor"
 	"bb/cmd/fileinfo"
 	"bb/cmd/hosts"
 	"bb/cmd/system"
 	"bb/cmd/utils"
 	"context"
+	"log"
+	"path/filepath"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -15,6 +18,7 @@ var host = hosts.GetHosts()
 var ck = check.GetCheck()
 var sys = system.GetSystem()
 var file = fileinfo.GetFileInfo()
+var ed = editor.GetEditor()
 
 // App struct
 type App struct {
@@ -33,12 +37,12 @@ func (a *App) startup(ctx context.Context) {
 }
 
 /* 读取hosts */
-func (a *App) ReadHostsFile() string {
+func (a *App) ReadHostsFile() utils.Resp[any] {
 	return host.ReadHostsFile()
 }
 
 /* 写入hosts */
-func (a *App) EditHostsFile(content string) string {
+func (a *App) EditHostsFile(content string) utils.Resp[any] {
 	return host.EditHostsFile(content)
 }
 
@@ -96,6 +100,56 @@ func (a *App) SelectFile() utils.Resp[any] {
 	return file.SelectFile(selection)
 }
 
+/* 修改文件信息 */
 func (a *App) ChangeFileInfo(fileInfo fileinfo.FileInfo) utils.Resp[any] {
 	return file.ChangeFileInfo(fileInfo)
+}
+
+/* 保存markdown */
+func (a *App) SaveFile(str string, path string) utils.Resp[any] {
+	return ed.SaveFile(str, path)
+}
+
+/* 打开markdown */
+func (a *App) OpenFile() utils.Resp[any] {
+	selection, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+		Title: "选择文件",
+		Filters: []runtime.FileFilter{
+			{
+				DisplayName: "所有文件",
+				Pattern:     "*.md",
+			},
+		},
+	})
+	if err != nil {
+		// 处理错误情况
+		return utils.Error[any](err.Error())
+	}
+	return ed.OpenFile(selection)
+}
+
+/* 已知路径打开markdown */
+func (a *App) OpenThisFile(filePath string) utils.Resp[any] {
+	return ed.OpenFile(filePath)
+}
+
+/* 保存文件对话框 */
+func (a *App) SaveFileDialog(title string) utils.Resp[any] {
+	file, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
+		Title:           "保存文件",
+		DefaultFilename: title + ".md",
+		Filters: []runtime.FileFilter{
+			{DisplayName: "MarkDown files", Pattern: "*.md"},
+		},
+	})
+	if err != nil {
+		log.Fatal(err)
+		return utils.Error[any](err.Error())
+	}
+	name := filepath.Base(file)
+	rs := map[string]string{
+		"path": file,
+		"name": name,
+	}
+	return utils.Success[any](rs, "")
 }

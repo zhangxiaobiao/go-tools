@@ -16,11 +16,19 @@ export function DesktopPath():Promise<string>;
 
 export function DeviceInfo():Promise<utils.Resp[interface {}]>;
 
-export function EditHostsFile(arg1:string):Promise<string>;
+export function EditHostsFile(arg1:string):Promise<utils.Resp[interface {}]>;
 
 export function ImportBackup(arg1:string):Promise<utils.Resp[interface {}]>;
 
-export function ReadHostsFile():Promise<string>;
+export function OpenFile():Promise<utils.Resp[interface {}]>;
+
+export function OpenThisFile(arg1:string):Promise<utils.Resp[interface {}]>;
+
+export function ReadHostsFile():Promise<utils.Resp[interface {}]>;
+
+export function SaveFile(arg1:string,arg2:string):Promise<utils.Resp[interface {}]>;
+
+export function SaveFileDialog(arg1:string):Promise<utils.Resp[interface {}]>;
 
 export function SaveTime(arg1:string,arg2:string):Promise<number>;
 

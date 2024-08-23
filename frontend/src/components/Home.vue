@@ -38,6 +38,9 @@ onMounted( async () => {
 </template>
 
 <style scoped lang="less">
+  .el-card{
+    height: calc(100vh - 12px);
+  }
 .el-row{
   line-height: 2;
 }

@@ -3,6 +3,8 @@ package db
 import (
 	"bb/cmd/db/entity"
 	"log"
+	"os"
+	"path/filepath"
 	"sync"
 
 	"gorm.io/driver/sqlite"
@@ -19,7 +21,13 @@ func Db() *gorm.DB {
 	}
 	once.Do(func() {
 		var err error
-		db, err = gorm.Open(sqlite.Open("bb.db"), &gorm.Config{
+		var dbfile = "data/bb.db"
+		dir := filepath.Dir(dbfile)
+		err = os.MkdirAll(dir, os.ModePerm)
+		if err != nil {
+			log.Fatal("数据库目录创建失败", err.Error())
+		}
+		db, err = gorm.Open(sqlite.Open(dbfile), &gorm.Config{
 			Logger: logger.Default.LogMode(logger.Info),
 		})
 		if err != nil {

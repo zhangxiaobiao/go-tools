@@ -34,8 +34,24 @@ export function ImportBackup(arg1) {
   return window['go']['main']['App']['ImportBackup'](arg1);
 }
 
+export function OpenFile() {
+  return window['go']['main']['App']['OpenFile']();
+}
+
+export function OpenThisFile(arg1) {
+  return window['go']['main']['App']['OpenThisFile'](arg1);
+}
+
 export function ReadHostsFile() {
   return window['go']['main']['App']['ReadHostsFile']();
+}
+
+export function SaveFile(arg1, arg2) {
+  return window['go']['main']['App']['SaveFile'](arg1, arg2);
+}
+
+export function SaveFileDialog(arg1) {
+  return window['go']['main']['App']['SaveFileDialog'](arg1);
 }
 
 export function SaveTime(arg1, arg2) {

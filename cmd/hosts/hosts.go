@@ -1,6 +1,7 @@
 package hosts
 
 import (
+	"bb/cmd/utils"
 	"os"
 )
 
@@ -18,28 +19,28 @@ func GetHosts() *Hosts {
 }
 
 /* 读hosts */
-func (h *Hosts) ReadHostsFile() string {
+func (h *Hosts) ReadHostsFile() utils.Resp[any] {
 	info, err := os.Stat(hostsPath)
 	if os.IsNotExist(err) || info.IsDir() {
-		return "Hosts file not found"
+		return utils.Error[any]("Hosts file not found")
 	}
 	content, err := os.ReadFile(hostsPath)
 	if err != nil {
-		return "Unable to read hosts file"
+		return utils.Error[any]("Unable to read hosts file")
 	}
-	return string(content)
+	return utils.Success[any](string(content), "读取成功")
 }
 
 /* 写hosts */
-func (h *Hosts) EditHostsFile(content string) string {
+func (h *Hosts) EditHostsFile(content string) utils.Resp[any] {
 	info, err := os.OpenFile(hostsPath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
 	if err != nil {
-		return err.Error()
+		return utils.Error[any](err.Error())
 	}
 	defer info.Close()
 	_, err = info.WriteString(content)
 	if err != nil {
-		return err.Error()
+		return utils.Error[any](err.Error())
 	}
-	return "写入成功"
+	return utils.Success[any](nil, "写入成功")
 }
