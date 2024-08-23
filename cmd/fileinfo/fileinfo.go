@@ -34,16 +34,18 @@ func (f *FileInfo) SelectFile(filePath string) utils.Resp[any] {
 	// 获取底层系统信息
 	sys := finfo.Sys()
 	switch sys := sys.(type) {
-	// case *syscall.Stat_t:
-	// 	// Unix-like 系统
-	// 	fileInfo.CreateTime = time.Unix(sys.Ctim.Sec, sys.Ctim.Nsec).Unix()
-	// 	fileInfo.AccessTime = time.Unix(sys.Atim.Sec, sys.Atim.Nsec).Unix()
-	// 	fileInfo.UpdateTime = time.Unix(sys.Mtim.Sec, sys.Ctim.Nsec).Unix()
-	case *syscall.Win32FileAttributeData:
-		// Windows 系统
-		fio.CreateTime = time.Unix(0, sys.CreationTime.Nanoseconds()).Unix()
-		fio.AccessTime = time.Unix(0, sys.LastAccessTime.Nanoseconds()).Unix()
-		fio.UpdateTime = time.Unix(0, sys.LastWriteTime.Nanoseconds()).Unix()
+	case *syscall.Stat_t:
+		// Unix-like 系统
+		fio.CreateTime = time.Unix(sys.Ctimespec.Sec, sys.Ctimespec.Nsec).Unix()
+		fio.AccessTime = time.Unix(sys.Atimespec.Sec, sys.Atimespec.Nsec).Unix()
+		fio.UpdateTime = time.Unix(sys.Mtimespec.Sec, sys.Ctimespec.Nsec).Unix()
+		break
+		// case *syscall.Win32FileAttributeData:
+		// 	// Windows 系统
+		// 	fio.CreateTime = time.Unix(0, sys.CreationTime.Nanoseconds()).Unix()
+		// 	fio.AccessTime = time.Unix(0, sys.LastAccessTime.Nanoseconds()).Unix()
+		// 	fio.UpdateTime = time.Unix(0, sys.LastWriteTime.Nanoseconds()).Unix()
+		// 	break
 	}
 	return utils.Success[any](fio, "获取成功")
 }

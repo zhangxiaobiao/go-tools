@@ -10,6 +10,7 @@ require (
 	github.com/labstack/gommon v0.4.0
 	github.com/shirou/gopsutil v3.21.11+incompatible
 	github.com/shirou/gopsutil/v3 v3.24.5
+	github.com/siddontang/go v0.0.0-20180604090527-bdc77568d726
 	github.com/wailsapp/wails/v2 v2.9.1
 	gorm.io/driver/sqlite v1.5.6
 	gorm.io/gorm v1.25.11

@@ -3,6 +3,9 @@ package hosts
 import (
 	"bb/cmd/utils"
 	"os"
+	"runtime"
+
+	"github.com/siddontang/go/log"
 )
 
 type Hosts struct {
@@ -10,7 +13,7 @@ type Hosts struct {
 
 var hosts *Hosts
 
-var hostsPath = "C:\\Windows\\System32\\drivers\\etc\\hosts"
+var deskPath string
 
 // var hostsPath = "D:\\code\\TEST\\go\\etc\\hosts"
 
@@ -20,11 +23,22 @@ func GetHosts() *Hosts {
 
 /* 读hosts */
 func (h *Hosts) ReadHostsFile() utils.Resp[any] {
-	info, err := os.Stat(hostsPath)
+	switch runtime.GOOS {
+	case "windows":
+		deskPath = "C:\\Windows\\System32\\drivers\\etc\\hosts"
+	case "darwin":
+		deskPath = "/private/etc/hosts"
+	case "linux":
+		deskPath = "/etc/hosts"
+	default:
+		deskPath = ""
+		log.Error("未知操作系统:", runtime.GOOS)
+	}
+	info, err := os.Stat(deskPath)
 	if os.IsNotExist(err) || info.IsDir() {
 		return utils.Error[any]("Hosts file not found")
 	}
-	content, err := os.ReadFile(hostsPath)
+	content, err := os.ReadFile(deskPath)
 	if err != nil {
 		return utils.Error[any]("Unable to read hosts file")
 	}
@@ -33,7 +47,7 @@ func (h *Hosts) ReadHostsFile() utils.Resp[any] {
 
 /* 写hosts */
 func (h *Hosts) EditHostsFile(content string) utils.Resp[any] {
-	info, err := os.OpenFile(hostsPath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
+	info, err := os.OpenFile(deskPath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
 	if err != nil {
 		return utils.Error[any](err.Error())
 	}
